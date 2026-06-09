@@ -1,0 +1,34 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.7.0'
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_msvc2019_64'
+        modules: 'qtwidgets'
+
+    - name: Build
+      shell: cmd
+      run: |
+        qmake CNCInterpolation.pro CONFIG+=release
+        nmake
+
+    - name: Upload EXE
+      uses: actions/upload-artifact@v4
+      with:
+        name: CNCInterpolation-windows
+        path: release/CNCInterpolation.exe
