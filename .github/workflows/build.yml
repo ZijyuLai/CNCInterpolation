@@ -29,8 +29,16 @@ jobs:
         qmake CNCInterpolation.pro CONFIG+=release
         nmake
 
-    - name: Upload EXE
+    - name: Package with windeployqt
+      shell: cmd
+      run: |
+        mkdir deploy
+        copy release\CNCInterpolation.exe deploy\
+        cd deploy
+        windeployqt --no-translations CNCInterpolation.exe
+
+    - name: Upload
       uses: actions/upload-artifact@v4
       with:
         name: CNCInterpolation-windows
-        path: release/CNCInterpolation.exe
+        path: deploy/
